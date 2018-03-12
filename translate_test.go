@@ -57,16 +57,17 @@ func fileContent(path string) ([]byte, error) {
 
 func TestTranslate(t *testing.T) {
 	tests := []struct {
-		TestData TestData
+		TestData   TestData
+		NumOfLinks int
 	}{
-		{TestData{"3p"}},
-		{TestData{"hs"}},
-		{TestData{"ol"}},
-		{TestData{"ul"}},
-		{TestData{"a"}},
-		{TestData{"as"}},
-		{TestData{"pAnda"}},
-		//{TestData{"table"}},
+		{TestData{"3p"}, 0},
+		{TestData{"hs"}, 0},
+		{TestData{"ol"}, 0},
+		{TestData{"ul"}, 0},
+		{TestData{"a"}, 1},
+		{TestData{"as"}, 4},
+		{TestData{"pAnda"}, 1},
+		//{TestData{"table"}, 0},
 	}
 
 	for _, test := range tests {
@@ -82,7 +83,7 @@ func TestTranslate(t *testing.T) {
 
 		log.Printf("Testing %s.html", test.TestData.Name)
 
-		result, err := Translate(inputFile)
+		result, links, err := Translate(inputFile)
 		log.Printf("result: %s\n\n", result)
 		log.Printf("OutputData: %s", string(outputData))
 
@@ -92,6 +93,10 @@ func TestTranslate(t *testing.T) {
 
 		if !strings.EqualFold(string(outputData), result) {
 			t.Errorf("Expected:\n%s\n\nBut received:\n%s", string(outputData), result)
+		}
+
+		if len(links) != test.NumOfLinks {
+			t.Errorf("Expeced %d number of links, but go %d", test.NumOfLinks, len(links))
 		}
 	}
 }

@@ -256,7 +256,7 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 }
 
 //Translate -- translates html to text
-func Translate(reader io.Reader) (string, error) {
+func Translate(reader io.Reader) (string, []string, error) {
 	var result string
 	var tempt string
 	var err error
@@ -288,5 +288,5 @@ func Translate(reader io.Reader) (string, error) {
 		}
 	}
 
-	return result, nil
+	return result, links, nil
 }
