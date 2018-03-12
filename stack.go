@@ -4,20 +4,6 @@ import (
 	"errors"
 )
 
-//Tag -- A struct for HTML tags
-type Tag string
-
-func (t Tag) String() string {
-	return string(t)
-}
-
-const (
-	//OpenPTag -- Open html p tag
-	OpenPTag = Tag("<p>")
-	//ClosePTag -- Closed html p tag
-	ClosePTag = Tag("</p>")
-)
-
 //Stack -- A stack used when processing the html tags during the translation from html to text
 type Stack []Tag
 
