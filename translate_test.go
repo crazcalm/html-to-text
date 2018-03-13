@@ -3,7 +3,6 @@ package htmlToText
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -82,11 +81,12 @@ func TestTranslate(t *testing.T) {
 			t.Errorf("Error when opening %s.txt: %s", test.TestData.Name, err.Error())
 		}
 
-		log.Printf("Testing %s.html", test.TestData.Name)
-
 		result, links, err := Translate(inputFile)
-		log.Printf("result: %s\n\n", result)
-		log.Printf("OutputData: %s", string(outputData))
+
+		//Debug Statments
+		//log.Printf("Testing %s.html", test.TestData.Name)
+		//log.Printf("result: %s\n\n", result)
+		//log.Printf("OutputData: %s", string(outputData))
 
 		if err != nil {
 			t.Errorf("Translate('%s.html') threw an error: %s", test.TestData.Name, err.Error())
