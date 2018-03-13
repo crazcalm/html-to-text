@@ -1,4 +1,4 @@
-package htmlToText
+package htmltotext
 
 //Tag -- A struct for HTML tags
 type Tag string

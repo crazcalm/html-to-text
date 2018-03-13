@@ -1,4 +1,4 @@
-package htmlToText
+package htmltotext
 
 import (
 	"strings"
