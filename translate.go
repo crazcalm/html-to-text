@@ -243,9 +243,15 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 			case bytes.HasPrefix(tokenBytes, CloseATag.Byte()):
 				log.Println("Case: </a>")
 
+				//Case: a tag nested in a p tag.
 				//Checking if I need to add a space
 				if strings.EqualFold(parentTag.String(), OpenPTag.String()) {
 					tempt = fmt.Sprintf("%s[%d] ", tempt, len(links))
+				}
+
+				//Case: a tag nested in a table tag
+				if strings.EqualFold(parentTag.String(), OpenTableTag.String()) {
+					tableItems[len(tableItems)-1] += fmt.Sprintf("[%d]", len(links))
 				}
 
 				stack, _, err = stack.Pop()
