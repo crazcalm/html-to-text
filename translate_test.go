@@ -67,7 +67,7 @@ func TestTranslate(t *testing.T) {
 		{TestData{"a"}, 1},
 		{TestData{"as"}, 4},
 		{TestData{"pAnda"}, 1},
-		//{TestData{"table"}, 0},
+		{TestData{"table"}, 0},
 	}
 
 	for _, test := range tests {
