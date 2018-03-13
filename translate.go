@@ -287,7 +287,7 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 						if len(tableItems) > count {
 							tableString = fmt.Sprintf("%s|%s", tableString, tableContent(tableItems[count], maxSpaces, leftSpacing))
 						} else {
-							tableString = fmt.Sprintf("%s|%s", tableString)
+							tableString = fmt.Sprintf("%s|%s", tableString, tableContent("", maxSpaces, leftSpacing))
 						}
 						count++
 					}
