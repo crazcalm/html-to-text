@@ -135,19 +135,26 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 				parentTag = OpenPTag
 
 			case bytes.HasPrefix(tokenBytes, ClosePTag.Byte()):
-				//Unset Parent Tag
-				parentTag = Tag("")
-
 				stack, _, err = stack.Pop()
 				if err != nil {
 					return stack, tempt, result, links, parentTag, listCount, tableRows, tableColumns, tableItems, ignoreToken, err
 				}
-				if len(stack) == 0 {
+				if len(stack) == 0 && strings.EqualFold(parentTag.String(), OpenPTag.String()) {
 					result = fmt.Sprintf("%s%s\n\n", result, tempt)
+					tempt = ""
+				} else {
+					result = fmt.Sprintf("%s%s\n", result, tempt)
 					tempt = ""
 				}
 
+				//Unset Parent Tag
+				parentTag = Tag("")
+
 			case bytes.HasPrefix(tokenBytes, OpenOLTag.Byte()):
+				if strings.EqualFold(parentTag.String(), OpenPTag.String()) {
+					tempt = fmt.Sprintf("%s\n", tempt)
+				}
+
 				//Set Parent Tag
 				parentTag = OpenOLTag
 
@@ -178,6 +185,10 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 				listCount = 1
 
 			case bytes.HasPrefix(tokenBytes, OpenULTag.Byte()):
+				if strings.EqualFold(parentTag.String(), OpenPTag.String()) {
+					tempt = fmt.Sprintf("%s\n", tempt)
+				}
+
 				//Set Parent Tag
 				parentTag = OpenULTag
 
@@ -195,6 +206,9 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 					result = fmt.Sprintf("%s%s\n", result, tempt)
 					tempt = ""
 				}
+
+				//Reset variable
+				listCount = 1
 
 			case bytes.HasPrefix(tokenBytes, OpenLITag.Byte()):
 				if strings.EqualFold(parentTag.String(), OpenOLTag.String()) {
@@ -223,15 +237,17 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 				}
 
 			case bytes.HasPrefix(tokenBytes, CloseATag.Byte()):
+				var addedLink bool // Used to denote it the link was added to the text
+
 				//Case: a tag nested in a p tag.
 				//Checking if I need to add a space
 				if strings.EqualFold(parentTag.String(), OpenPTag.String()) {
 					tempt = fmt.Sprintf("%s[%d] ", tempt, len(links))
-				}
-
-				//Case: a tag nested in a table tag
-				if strings.EqualFold(parentTag.String(), OpenTableTag.String()) {
+					addedLink = true
+				} else if strings.EqualFold(parentTag.String(), OpenTableTag.String()) {
+					//Case: a tag nested in a table tag
 					tableItems[len(tableItems)-1] += fmt.Sprintf("[%d]", len(links))
+					addedLink = true
 				}
 
 				stack, _, err = stack.Pop()
@@ -241,6 +257,12 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 				if len(stack) == 0 {
 					result = fmt.Sprintf("%s%s[%d]", result, tempt, len(links))
 					tempt = ""
+					addedLink = true
+				}
+
+				//Makes sure that the link was added
+				if !addedLink {
+					tempt = fmt.Sprintf("%s[%d]", tempt, len(links))
 				}
 
 			case bytes.HasPrefix(tokenBytes, OpenTableTag.Byte()):
