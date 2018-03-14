@@ -231,20 +231,10 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 					}
 				}
 
-				//Checking if I need to add a space
-				if strings.EqualFold(parentTag.String(), OpenPTag.String()) {
-					tempt = fmt.Sprintf("%s ", tempt)
-				}
-
 			case bytes.HasPrefix(tokenBytes, CloseATag.Byte()):
 				var addedLink bool // Used to denote it the link was added to the text
 
-				//Case: a tag nested in a p tag.
-				//Checking if I need to add a space
-				if strings.EqualFold(parentTag.String(), OpenPTag.String()) {
-					tempt = fmt.Sprintf("%s[%d] ", tempt, len(links))
-					addedLink = true
-				} else if strings.EqualFold(parentTag.String(), OpenTableTag.String()) {
+				if strings.EqualFold(parentTag.String(), OpenTableTag.String()) {
 					//Case: a tag nested in a table tag
 					tableItems[len(tableItems)-1] += fmt.Sprintf("[%d]", len(links))
 					addedLink = true
@@ -358,6 +348,10 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 		} else {
 			if strings.EqualFold(parentTag.String(), OpenTableTag.String()) {
 				tableItems = append(tableItems, tokenString)
+			} else if strings.EqualFold(parentTag.String(), OpenPTag.String()) {
+				//Keep original spacing
+				tempt += token.String()
+
 			} else if ignoreToken {
 				//Do nothing
 			} else {
@@ -414,6 +408,9 @@ func Translate(reader io.Reader) (string, []string, error) {
 			log.Fatalf("ProcessToken had an error: %s", err.Error())
 		}
 	}
+
+	//Convert html string to readable text
+	result = html.UnescapeString(result)
 
 	return result, links, nil
 }

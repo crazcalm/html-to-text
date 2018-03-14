@@ -70,7 +70,6 @@ func TestTranslate(t *testing.T) {
 		{TestData{"tableWithLinks"}, 2},
 		{TestData{"pAndulWitha"}, 3},
 		{TestData{"pAndolWitha"}, 3},
-		//{TestData{"sn654"}, 10},
 	}
 
 	for _, test := range tests {
