@@ -330,10 +330,6 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 							tableString = fmt.Sprintf("%s|\n", tableString)
 						}
 					}
-				} else {
-					//Case: Tables with 0 rows that are used for styleing a page and not as traditional tables
-					//Looking at you https://golangweekly.com/issues/201
-					//tableString = strings.Join(tableItems, "\n")
 				}
 
 				//Step 3: add table to result
