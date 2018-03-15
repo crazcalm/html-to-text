@@ -1,0 +1,13 @@
+Golang Weekly[1]
+Issue 201 — March  8, 2018
+
+FeaturedWebAssembly Architecture for Go[2]
+Notes on work being done to make WebAssembly an official target for the Go compiler in Go 1.11. This will allow compiled Go programs to run in the browser as first-class citizens.
+Richard Musiol
+
+
+A Primer on Go Assembly[3]
+Part of an in-developmentbook about the internals of Go[4], this chapter digs into the platform independent ‘pseudo-assembly’ the Go compiler outputs.
+Clement Rey
+
+

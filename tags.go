@@ -13,6 +13,11 @@ func (t Tag) Byte() []byte {
 }
 
 const (
+	//OpenDivTag -- Open html div tag
+	OpenDivTag = Tag("<div")
+	//CloseDivTag -- Close html div tag
+	CloseDivTag = Tag("</div>")
+
 	//OpenH1Tag -- Open html h1 tag
 	OpenH1Tag = Tag("<h1>")
 	//CloseH1Tag -- Closed html h1 tag

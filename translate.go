@@ -29,12 +29,6 @@ func tableContent(item string, totalSpaces, leftSpacing int) string {
 }
 
 func processToken(token html.Token, stack Stack, tempt, result string, links []string, parentTag Tag, listCount int, tableRows int, tableColumns int, tableItems []string, ignoreToken bool) (Stack, string, string, []string, Tag, int, int, int, []string, bool, error) {
-	//Debug statements
-	//log.Printf("ProcessToken -- token: %s\n\n", token)
-	//log.Printf("ProcessToken -- tempt: %s\n\n", tempt)
-	//log.Printf("ProcessToken -- result: %s\n\n", result)
-	//log.Println(stack)
-
 	var err error
 	tokenString := strings.TrimSpace(token.String())
 	tokenBytes := []byte(tokenString)
@@ -44,9 +38,24 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 		//Check for Tag
 		if bytes.HasPrefix(tokenBytes, []byte("<")) && bytes.HasSuffix(tokenBytes, []byte(">")) {
 			switch {
+			case bytes.HasPrefix(tokenBytes, OpenDivTag.Byte()):
+				stack = stack.Push(OpenDivTag)
+
+			case bytes.HasPrefix(tokenBytes, CloseDivTag.Byte()):
+				stack, _, err = stack.Pop()
+				if err != nil {
+					return stack, tempt, result, links, parentTag, listCount, tableRows, tableColumns, tableItems, ignoreToken, err
+				}
+
+				if len(stack) == 0 {
+					result = fmt.Sprintf("%s%s\n", result, tempt)
+					tempt = ""
+				} else {
+					tempt = fmt.Sprintf("%s\n", tempt)
+				}
+
 			case bytes.HasPrefix(tokenBytes, OpenH1Tag.Byte()):
 				stack = stack.Push(OpenH1Tag)
-				tempt = fmt.Sprintf("%s", tempt)
 
 			case bytes.HasPrefix(tokenBytes, CloseH1Tag.Byte()):
 				stack, _, err = stack.Pop()
@@ -56,11 +65,12 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 				if len(stack) == 0 {
 					result = fmt.Sprintf("%s%s\n", result, tempt)
 					tempt = ""
+				} else {
+					tempt = fmt.Sprintf("%s\n\n", tempt)
 				}
 
 			case bytes.HasPrefix(tokenBytes, OpenH2Tag.Byte()):
 				stack = stack.Push(OpenH2Tag)
-				tempt = fmt.Sprintf("%s", tempt)
 
 			case bytes.HasPrefix(tokenBytes, CloseH2Tag.Byte()):
 				stack, _, err = stack.Pop()
@@ -70,11 +80,12 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 				if len(stack) == 0 {
 					result = fmt.Sprintf("%s%s\n", result, tempt)
 					tempt = ""
+				} else {
+					tempt = fmt.Sprintf("%s\n\n", tempt)
 				}
 
 			case bytes.HasPrefix(tokenBytes, OpenH3Tag.Byte()):
 				stack = stack.Push(OpenH3Tag)
-				tempt = fmt.Sprintf("%s", tempt)
 
 			case bytes.HasPrefix(tokenBytes, CloseH3Tag.Byte()):
 				stack, _, err = stack.Pop()
@@ -84,11 +95,12 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 				if len(stack) == 0 {
 					result = fmt.Sprintf("%s%s\n", result, tempt)
 					tempt = ""
+				} else {
+					tempt = fmt.Sprintf("%s\n\n", tempt)
 				}
 
 			case bytes.HasPrefix(tokenBytes, OpenH4Tag.Byte()):
 				stack = stack.Push(OpenH4Tag)
-				tempt = fmt.Sprintf("%s", tempt)
 
 			case bytes.HasPrefix(tokenBytes, CloseH4Tag.Byte()):
 				stack, _, err = stack.Pop()
@@ -98,11 +110,12 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 				if len(stack) == 0 {
 					result = fmt.Sprintf("%s%s\n", result, tempt)
 					tempt = ""
+				} else {
+					tempt = fmt.Sprintf("%s\n\n", tempt)
 				}
 
 			case bytes.HasPrefix(tokenBytes, OpenH5Tag.Byte()):
 				stack = stack.Push(OpenH5Tag)
-				tempt = fmt.Sprintf("%s", tempt)
 
 			case bytes.HasPrefix(tokenBytes, CloseH5Tag.Byte()):
 				stack, _, err = stack.Pop()
@@ -112,11 +125,12 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 				if len(stack) == 0 {
 					result = fmt.Sprintf("%s%s\n", result, tempt)
 					tempt = ""
+				} else {
+					tempt = fmt.Sprintf("%s\n\n", tempt)
 				}
 
 			case bytes.HasPrefix(tokenBytes, OpenH6Tag.Byte()):
 				stack = stack.Push(OpenH6Tag)
-				tempt = fmt.Sprintf("%s", tempt)
 
 			case bytes.HasPrefix(tokenBytes, CloseH6Tag.Byte()):
 				stack, _, err = stack.Pop()
@@ -126,6 +140,8 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 				if len(stack) == 0 {
 					result = fmt.Sprintf("%s%s\n", result, tempt)
 					tempt = ""
+				} else {
+					tempt = fmt.Sprintf("%s\n\n", tempt)
 				}
 
 			case bytes.HasPrefix(tokenBytes, OpenPTag.Byte()):
@@ -238,6 +254,9 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 					//Case: a tag nested in a table tag
 					tableItems[len(tableItems)-1] += fmt.Sprintf("[%d]", len(links))
 					addedLink = true
+
+					//Case: Table with no rows -- A.K.A not a real table...
+					tempt = fmt.Sprintf("%s[%d]", tempt, len(links))
 				}
 
 				stack, _, err = stack.Pop()
@@ -286,36 +305,48 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 				leftSpacing := wordSpacing / 2
 				maxSpaces := wordLength + wordSpacing //  Total number of spaces in each box
 
-				for y := 0; y < tableColumns+1; y++ {
-					tableString = fmt.Sprintf("%s%s\n", tableString, tableBoarder(wordLength, tableRows, wordSpacing))
+				//If this is an actual table with rows then do this
+				if tableRows != 0 {
 
-					for x := 0; x < tableRows; x++ {
+					for y := 0; y < tableColumns+1; y++ {
+						tableString = fmt.Sprintf("%s%s\n", tableString, tableBoarder(wordLength, tableRows, wordSpacing))
 
-						//Need to end the loop
-						if y == tableColumns {
-							break
+						for x := 0; x < tableRows; x++ {
+
+							//Need to end the loop
+							if y == tableColumns {
+								break
+							}
+
+							if len(tableItems) > count {
+								tableString = fmt.Sprintf("%s|%s", tableString, tableContent(tableItems[count], maxSpaces, leftSpacing))
+							} else {
+								tableString = fmt.Sprintf("%s|%s", tableString, tableContent("", maxSpaces, leftSpacing))
+							}
+							count++
 						}
-
-						if len(tableItems) > count {
-							tableString = fmt.Sprintf("%s|%s", tableString, tableContent(tableItems[count], maxSpaces, leftSpacing))
-						} else {
-							tableString = fmt.Sprintf("%s|%s", tableString, tableContent("", maxSpaces, leftSpacing))
+						//I Need this to stop one iterval prior to the end
+						if y < tableColumns {
+							tableString = fmt.Sprintf("%s|\n", tableString)
 						}
-						count++
 					}
-					//I Need this to stop one iterval prior to the end
-					if y < tableColumns {
-						tableString = fmt.Sprintf("%s|\n", tableString)
-					}
+				} else {
+					//Case: Tables with 0 rows that are used for styleing a page and not as traditional tables
+					//Looking at you https://golangweekly.com/issues/201
+					//tableString = strings.Join(tableItems, "\n")
 				}
 
 				//Step 3: add table to result
-				result += fmt.Sprintf("%s\n", tableString)
-
+				if tableRows != 0 {
+					result += fmt.Sprintf("%s\n", tableString)
+				} else {
+					result += fmt.Sprintf("%s\n", tempt)
+				}
 				//Step 4: reset variables
 				tableRows = 0
 				tableColumns = 0
 				tableItems = []string{}
+				tempt = ""
 
 			case bytes.HasPrefix(tokenBytes, OpenTRTag.Byte()):
 				tableColumns++
@@ -355,6 +386,7 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 		} else {
 			if strings.EqualFold(parentTag.String(), OpenTableTag.String()) {
 				tableItems = append(tableItems, tokenString)
+				tempt += fmt.Sprintf("%s", tokenString)
 			} else if strings.EqualFold(parentTag.String(), OpenPTag.String()) {
 				//Keep original spacing
 				tempt += token.String()
@@ -368,14 +400,16 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 	}
 
 	//Debug statements
-	//log.Println("Returned:")
-	//log.Printf("Stack: ")
-	//log.Print(stack)
-	//log.Printf("Tempt: %s\n", tempt)
-	//log.Printf("Result: %s\n", result)
-	//log.Printf("TableRows: %d, TableColumns %d\n", tableRows, tableColumns)
-	//log.Print("TableItems: ")
-	//log.Println(tableItems)
+	//fmt.Printf("ProcessToken -- token: %s\n\n", token)
+	//fmt.Printf("ProcessToken -- tempt: %s\n\n", tempt)
+	//fmt.Printf("Stack: ")
+	//fmt.Print(stack)
+	//fmt.Printf("Tempt: %s--[end]\n", tempt)
+	//fmt.Printf("Result: %s\n", result)
+	//fmt.Printf("TableRows: %d, TableColumns %d\n", tableRows, tableColumns)
+	//fmt.Print("TableItems: ")
+	//fmt.Println(tableItems)
+	//fmt.Printf("%s\n\n", strings.Repeat("-", 20))
 	return stack, tempt, result, links, parentTag, listCount, tableRows, tableColumns, tableItems, ignoreToken, nil
 }
 

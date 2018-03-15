@@ -71,7 +71,9 @@ func TestTranslate(t *testing.T) {
 		{TestData{"pAndulWitha"}, 3},
 		{TestData{"pAndolWitha"}, 3},
 		{TestData{"br"}, 0},
-		{TestData{"thead"}, 13}, //  Just guessing
+		{TestData{"thead"}, 13},
+		{TestData{"notRealTables"}, 4},
+		{TestData{"div"}, 0},
 	}
 
 	for _, test := range tests {
