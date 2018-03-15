@@ -2,10 +2,34 @@ package htmltotext
 
 import (
 	"errors"
+	"strings"
 )
 
 //Stack -- A stack used when processing the html tags during the translation from html to text
 type Stack []Tag
+
+//Contains -- Checks to see if a Tag is in the Stack
+func (s Stack) Contains(t Tag) bool {
+	result := false
+	for _, tag := range s {
+		if strings.EqualFold(tag.String(), t.String()) {
+			result = true
+			break
+		}
+	}
+	return result
+}
+
+//OnTop -- Checks if the wanted Tag is on Top
+func (s Stack) OnTop(t Tag) bool {
+	result := false
+	if len(s) > 0 {
+		if strings.EqualFold(t.String(), s[len(s)-1].String()) {
+			result = true
+		}
+	}
+	return result
+}
 
 //Push -- Pushes a Tag onto the stack
 func (s Stack) Push(t Tag) Stack {

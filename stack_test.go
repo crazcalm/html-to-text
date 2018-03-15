@@ -13,6 +13,44 @@ func TestNewStack(t *testing.T) {
 	}
 }
 
+func TestContains(t *testing.T) {
+	tests := []struct {
+		Stack  Stack
+		Tag    Tag
+		Answer bool
+	}{
+		{Stack{}, OpenPTag, false},
+		{Stack{OpenPTag}, OpenPTag, true},
+		{Stack{OpenH1Tag, OpenH2Tag, OpenH3Tag}, OpenPTag, false},
+		{Stack{OpenH1Tag, OpenH2Tag, OpenH3Tag, OpenPTag}, OpenPTag, true},
+	}
+
+	for _, test := range tests {
+		if test.Stack.Contains(test.Tag) != test.Answer {
+			t.Errorf("stack.Contains(%s): Expected %t, but got %t", test.Tag.String(), test.Answer, test.Stack.Contains(test.Tag))
+		}
+	}
+}
+
+func TestOnTop(t *testing.T) {
+	tests := []struct {
+		Stack  Stack
+		Tag    Tag
+		Answer bool
+	}{
+		{Stack{}, OpenPTag, false},
+		{Stack{OpenPTag}, OpenPTag, true},
+		{Stack{OpenH1Tag, OpenPTag, OpenH3Tag}, OpenPTag, false},
+		{Stack{OpenH1Tag, OpenPTag, OpenH3Tag, OpenPTag}, OpenPTag, true},
+	}
+
+	for _, test := range tests {
+		if test.Stack.OnTop(test.Tag) != test.Answer {
+			t.Errorf("stack.OnTop(%s): Expected %t, but got %t\n%v", test.Tag.String(), test.Answer, test.Stack.Contains(test.Tag), test.Stack)
+		}
+	}
+}
+
 func TestPush(t *testing.T) {
 	tests := []struct {
 		Stack    Stack
