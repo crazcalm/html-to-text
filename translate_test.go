@@ -70,6 +70,8 @@ func TestTranslate(t *testing.T) {
 		{TestData{"tableWithLinks"}, 2},
 		{TestData{"pAndulWitha"}, 3},
 		{TestData{"pAndolWitha"}, 3},
+		{TestData{"br"}, 0},
+		{TestData{"thead"}, 13}, //  Just guessing
 	}
 
 	for _, test := range tests {
@@ -95,11 +97,11 @@ func TestTranslate(t *testing.T) {
 		}
 
 		if !strings.EqualFold(string(outputData), result) {
-			t.Errorf("Expected:\n%s\n\nBut received:\n%s", string(outputData), result)
+			t.Errorf("Expected:\n%s\n\nBut received:\n%s[end]", string(outputData), result)
 		}
 
 		if len(links) != test.NumOfLinks {
-			t.Errorf("Expeced %d number of links, but go %d", test.NumOfLinks, len(links))
+			t.Errorf("Expeced %d number of links, but got %d", test.NumOfLinks, len(links))
 		}
 	}
 }

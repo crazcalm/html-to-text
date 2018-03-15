@@ -322,6 +322,10 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 
 			case bytes.HasPrefix(tokenBytes, CloseTRTag.Byte()):
 
+			case bytes.HasPrefix(tokenBytes, OpenTHeadTag.Byte()):
+
+			case bytes.HasPrefix(tokenBytes, CloseTHeadTag.Byte()):
+
 			case bytes.HasPrefix(tokenBytes, OpenTHTag.Byte()):
 				tableRows++
 
@@ -342,6 +346,9 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 			case bytes.HasPrefix(tokenBytes, CloseHeadTag.Byte()):
 				//Turn off ignore token
 				ignoreToken = false
+
+			case bytes.HasPrefix(tokenBytes, BreakTag.Byte()):
+				result += fmt.Sprintf("%s\n\n", tempt)
 
 			default:
 			}

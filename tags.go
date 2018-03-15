@@ -69,7 +69,7 @@ const (
 	CloseATag = Tag("</a>")
 
 	//OpenTableTag -- Open html table tag
-	OpenTableTag = Tag("<table>")
+	OpenTableTag = Tag("<table")
 	//CloseTableTag -- Close html table tag
 	CloseTableTag = Tag("</table>")
 
@@ -78,8 +78,13 @@ const (
 	//CloseTRTag -- Close html tr tag
 	CloseTRTag = Tag("</tr>")
 
+	//OpenTHeadTag -- Open html thead tag
+	OpenTHeadTag = Tag("<thead")
+	//CloseTHeadTag -- Close html thead tag
+	CloseTHeadTag = Tag("</thead>")
+
 	//OpenTHTag -- Open html th tag
-	OpenTHTag = Tag("<th>")
+	OpenTHTag = Tag("<th")
 	//CloseTHTag -- Close html th tag
 	CloseTHTag = Tag("</th>")
 
@@ -97,4 +102,7 @@ const (
 	OpenHeadTag = Tag("<head>")
 	//CloseHeadTag -- Close html head tag
 	CloseHeadTag = Tag("</head>")
+
+	//BreakTag -- html br tag
+	BreakTag = Tag("<br")
 )
