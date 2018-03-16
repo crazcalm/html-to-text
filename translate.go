@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"log"
 	"strconv"
 	"strings"
 
@@ -155,7 +154,7 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 					if strings.EqualFold(attr.Key, "start") {
 						listCount, err = strconv.Atoi(attr.Val)
 						if err != nil {
-							return stack, tempt, result, links, listCount, tableRows, tableColumns, tableItems, ignoreToken, err
+							listCount = 1
 						}
 					}
 				}
@@ -379,14 +378,14 @@ func Translate(reader io.Reader) (string, []string, error) {
 			}
 
 			//Error case
-			log.Fatalf("html Parser err token: %s", data.Err())
+			return result, links, fmt.Errorf("html Parser err token: %s", data.Err())
 		}
 		// Process the current token.
 		token := data.Token()
 
 		stack, tempt, result, links, listCount, tableRows, tableColumns, tableItems, ignoreToken, err = processToken(token, stack, tempt, result, links, listCount, tableRows, tableColumns, tableItems, ignoreToken)
 		if err != nil {
-			log.Fatalf("ProcessToken had an error: %s", err.Error())
+			return result, links, fmt.Errorf("ProcessToken had an error: %s", err.Error())
 		}
 	}
 

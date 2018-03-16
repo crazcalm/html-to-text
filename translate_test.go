@@ -54,6 +54,31 @@ func fileContent(path string) ([]byte, error) {
 	return ioutil.ReadAll(file)
 }
 
+func TestTrandlateError(t *testing.T) {
+	tests := []struct {
+		FileName string
+		Error    string
+	}{
+		{filepath.Join("_test_data", "pError.html"), "ProcessToken had an error: Stack is Empty"},
+	}
+
+	for _, test := range tests {
+		file, err := getFile(test.FileName)
+		if err != nil {
+			t.Errorf("%s", err.Error())
+		}
+
+		_, _, err = Translate(file)
+		if err == nil {
+			t.Errorf("Expected error -- %s --, but did not receive it", test.Error)
+		}
+
+		if !strings.EqualFold(err.Error(), test.Error) {
+			t.Errorf("Expected error: %s, but got %s", test.Error, err.Error())
+		}
+	}
+}
+
 func TestTranslate(t *testing.T) {
 	tests := []struct {
 		TestData   TestData
@@ -75,6 +100,7 @@ func TestTranslate(t *testing.T) {
 		{TestData{"notRealTables"}, 4},
 		{TestData{"div"}, 0},
 		{TestData{"divAnda"}, 1},
+		{TestData{"olWithInvalidStart"}, 0},
 	}
 
 	for _, test := range tests {
