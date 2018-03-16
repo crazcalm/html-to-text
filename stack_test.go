@@ -13,6 +13,18 @@ func TestNewStack(t *testing.T) {
 	}
 }
 
+func TestContainsMultiple(t *testing.T) {
+	stack := Stack{OpenPTag, OpenH1Tag, OpenTableTag, OpenOLTag}
+
+	if stack.Contains(OpenH2Tag, OpenH3Tag, OpenH6Tag) {
+		t.Errorf("TestContainsMultiple Case A failed")
+	}
+
+	if !stack.Contains(OpenH2Tag, OpenH1Tag, OpenH6Tag) {
+		t.Errorf("TestContainsMultiple Case B failed")
+	}
+}
+
 func TestContains(t *testing.T) {
 	tests := []struct {
 		Stack  Stack

@@ -102,6 +102,7 @@ func TestTranslate(t *testing.T) {
 		{TestData{"divAnda"}, 1},
 		{TestData{"olWithInvalidStart"}, 0},
 		{TestData{"tableMissingValues"}, 0},
+		{TestData{"pAndbr"}, 0},
 	}
 
 	for _, test := range tests {

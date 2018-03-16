@@ -267,7 +267,11 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 				ignoreToken = false
 
 			case bytes.HasPrefix(tokenBytes, BreakTag.Byte()):
-				result += fmt.Sprintf("%s\n\n", tempt)
+				if stack.Contains(OpenPTag, OpenH1Tag, OpenH2Tag, OpenH3Tag, OpenH4Tag, OpenH5Tag, OpenH6Tag) {
+					tempt = fmt.Sprintf("%s\n", tempt)
+				} else {
+					result += fmt.Sprintf("%s\n\n", tempt)
+				}
 
 			default:
 			}

@@ -1,0 +1,6 @@
+It's been a surprisingly quiet week for big Go related news, but we have quite a lot of code links for you - find them at the bottom of this issue :-)
+
+If you have any Go articles or projects we should consider for a future issue, hit 'reply' to this newsletter, and send them in. We read all submissions and most make it into an issue.
+
+- The Golang Weekly Team (Peter, Glenn, Chris, and Za'e)
+

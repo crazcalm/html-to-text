@@ -9,12 +9,14 @@ import (
 type Stack []Tag
 
 //Contains -- Checks to see if a Tag is in the Stack
-func (s Stack) Contains(t Tag) bool {
+func (s Stack) Contains(tags ...Tag) bool {
 	result := false
-	for _, tag := range s {
-		if strings.EqualFold(tag.String(), t.String()) {
-			result = true
-			break
+	for _, t := range tags {
+		for _, tag := range s {
+			if strings.EqualFold(tag.String(), t.String()) {
+				result = true
+				break
+			}
 		}
 	}
 	return result
