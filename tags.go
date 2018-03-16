@@ -110,4 +110,7 @@ const (
 
 	//BreakTag -- html br tag
 	BreakTag = Tag("<br")
+
+	//ImageTag -- html img tag
+	ImageTag = Tag("<img")
 )

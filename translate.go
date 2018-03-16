@@ -276,6 +276,43 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 					result += fmt.Sprintf("%s\n\n", tempt)
 				}
 
+			case bytes.HasPrefix(tokenBytes, ImageTag.Byte()):
+				var finalText string
+				var text string
+
+				//Capture the src
+				for _, attr := range token.Attr {
+					if strings.EqualFold(attr.Key, "src") {
+						links = append(links, attr.Val)
+					}
+
+					//Capture the title
+					if strings.EqualFold(attr.Key, "title") {
+						text = attr.Val
+					}
+
+					//Capture the alt
+					if strings.EqualFold(attr.Key, "alt") {
+						text = attr.Val
+					}
+
+				}
+
+				//Format the image text
+				if strings.EqualFold(text, "") {
+					finalText = fmt.Sprintf("[image %d]", len(links))
+				} else {
+
+					finalText = fmt.Sprintf("[image %d: %s]", len(links), text)
+				}
+
+				//Adding it to the rest of the text
+				if stack.Contains(OpenPTag, OpenH1Tag, OpenH2Tag, OpenH3Tag, OpenH4Tag, OpenH5Tag, OpenH6Tag) {
+					tempt = fmt.Sprintf("%s%s", tempt, finalText)
+				} else {
+					result += fmt.Sprintf("%s%s\n\n", tempt, finalText)
+				}
+
 			default:
 			}
 		} else {
