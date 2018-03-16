@@ -40,11 +40,12 @@ func tagInList(tokenBytes []byte, tags []Tag) bool {
 
 func processToken(token html.Token, stack Stack, tempt, result string, links []string, listCount int, tableRows int, tableColumns int, tableItems []string, ignoreToken bool) (Stack, string, string, []string, int, int, int, []string, bool, error) {
 	var err error
-	tagsThatPopTheStack := []Tag{CloseDivTag, CloseH1Tag, CloseH2Tag, CloseH3Tag, CloseH4Tag, CloseH5Tag, CloseH6Tag, ClosePTag, CloseOLTag, CloseULTag, CloseATag, CloseTableTag}
+	tagsThatPopTheStack := []Tag{CloseDivTag, CloseH1Tag, CloseH2Tag, CloseH3Tag, CloseH4Tag, CloseH5Tag, CloseH6Tag, ClosePTag, CloseOLTag, CloseULTag, CloseATag, CloseTableTag, CloseLITag}
 	tokenString := strings.TrimSpace(token.String())
 	tokenBytes := []byte(tokenString)
 
-	if len(tokenString) > 2 {
+	//Used to ignore empty strings
+	if len(tokenString) > 0 {
 
 		//Check for Tag
 		if bytes.HasPrefix(tokenBytes, []byte("<")) && bytes.HasSuffix(tokenBytes, []byte(">")) {
@@ -146,6 +147,8 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 				listCount = 1
 
 			case bytes.HasPrefix(tokenBytes, OpenLITag.Byte()):
+				stack = stack.Push(OpenLITag)
+
 				if stack.Contains(OpenOLTag) {
 					tempt = fmt.Sprintf("%s  %d. ", tempt, listCount)
 					listCount++
@@ -279,7 +282,7 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 			if stack.Contains(OpenTableTag) {
 				tableItems = append(tableItems, tokenString)
 				tempt += tokenString
-			} else if stack.Contains(OpenPTag) || stack.Contains(OpenDivTag) {
+			} else if stack.Contains(OpenPTag, OpenDivTag, OpenLITag) {
 				//Keep original spacing
 				tempt += token.String()
 
