@@ -70,62 +70,22 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 			case bytes.HasPrefix(tokenBytes, OpenH1Tag.Byte()):
 				stack = stack.Push(OpenH1Tag)
 
-			case bytes.HasPrefix(tokenBytes, CloseH1Tag.Byte()):
-				if len(stack) == 0 {
-					result = fmt.Sprintf("%s%s\n", result, tempt)
-					tempt = ""
-				} else {
-					tempt = fmt.Sprintf("%s\n\n", tempt)
-				}
-
 			case bytes.HasPrefix(tokenBytes, OpenH2Tag.Byte()):
 				stack = stack.Push(OpenH2Tag)
-
-			case bytes.HasPrefix(tokenBytes, CloseH2Tag.Byte()):
-				if len(stack) == 0 {
-					result = fmt.Sprintf("%s%s\n", result, tempt)
-					tempt = ""
-				} else {
-					tempt = fmt.Sprintf("%s\n\n", tempt)
-				}
 
 			case bytes.HasPrefix(tokenBytes, OpenH3Tag.Byte()):
 				stack = stack.Push(OpenH3Tag)
 
-			case bytes.HasPrefix(tokenBytes, CloseH3Tag.Byte()):
-				if len(stack) == 0 {
-					result = fmt.Sprintf("%s%s\n", result, tempt)
-					tempt = ""
-				} else {
-					tempt = fmt.Sprintf("%s\n\n", tempt)
-				}
-
 			case bytes.HasPrefix(tokenBytes, OpenH4Tag.Byte()):
 				stack = stack.Push(OpenH4Tag)
-
-			case bytes.HasPrefix(tokenBytes, CloseH4Tag.Byte()):
-				if len(stack) == 0 {
-					result = fmt.Sprintf("%s%s\n", result, tempt)
-					tempt = ""
-				} else {
-					tempt = fmt.Sprintf("%s\n\n", tempt)
-				}
 
 			case bytes.HasPrefix(tokenBytes, OpenH5Tag.Byte()):
 				stack = stack.Push(OpenH5Tag)
 
-			case bytes.HasPrefix(tokenBytes, CloseH5Tag.Byte()):
-				if len(stack) == 0 {
-					result = fmt.Sprintf("%s%s\n", result, tempt)
-					tempt = ""
-				} else {
-					tempt = fmt.Sprintf("%s\n\n", tempt)
-				}
-
 			case bytes.HasPrefix(tokenBytes, OpenH6Tag.Byte()):
 				stack = stack.Push(OpenH6Tag)
 
-			case bytes.HasPrefix(tokenBytes, CloseH6Tag.Byte()):
+			case tagInList(tokenBytes, []Tag{CloseH1Tag, CloseH2Tag, CloseH3Tag, CloseH4Tag, CloseH5Tag, CloseH6Tag}):
 				if len(stack) == 0 {
 					result = fmt.Sprintf("%s%s\n", result, tempt)
 					tempt = ""
@@ -291,24 +251,12 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 			case bytes.HasPrefix(tokenBytes, OpenTRTag.Byte()):
 				tableColumns++
 
-			case bytes.HasPrefix(tokenBytes, CloseTRTag.Byte()):
-
 			case bytes.HasPrefix(tokenBytes, OpenTHeadTag.Byte()):
-
-			case bytes.HasPrefix(tokenBytes, CloseTHeadTag.Byte()):
+				//Needed so that the <thead tag does not get
+				//mistaken for a <th tag
 
 			case bytes.HasPrefix(tokenBytes, OpenTHTag.Byte()):
 				tableRows++
-
-			case bytes.HasPrefix(tokenBytes, CloseTHTag.Byte()):
-
-			case bytes.HasPrefix(tokenBytes, OpenTDTag.Byte()):
-
-			case bytes.HasPrefix(tokenBytes, CloseTDTag.Byte()):
-
-			case bytes.HasPrefix(tokenBytes, OpenStyleTag.Byte()):
-
-			case bytes.HasPrefix(tokenBytes, CloseStyleTag.Byte()):
 
 			case bytes.HasPrefix(tokenBytes, OpenHeadTag.Byte()):
 				//Turn on ignore token
