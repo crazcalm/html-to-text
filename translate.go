@@ -274,6 +274,7 @@ func processToken(token html.Token, stack Stack, tempt, result string, links []s
 					tempt = fmt.Sprintf("%s\n", tempt)
 				} else {
 					result += fmt.Sprintf("%s\n\n", tempt)
+					tempt = ""
 				}
 
 			case bytes.HasPrefix(tokenBytes, ImageTag.Byte()):

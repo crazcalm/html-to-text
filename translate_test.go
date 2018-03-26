@@ -109,6 +109,7 @@ func TestTranslate(t *testing.T) {
 		{TestData{"imageWithText"}, 1},
 		{TestData{"imageWithAlt"}, 1},
 		{TestData{"imageAndp"}, 1},
+		{TestData{"brAndh3"}, 0},
 	}
 
 	for _, test := range tests {
