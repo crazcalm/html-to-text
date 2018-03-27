@@ -49,7 +49,7 @@ const (
 	CloseH6Tag = Tag("</h6>")
 
 	//OpenPTag -- Open html p tag
-	OpenPTag = Tag("<p>")
+	OpenPTag = Tag("<p")
 	//ClosePTag -- Closed html p tag
 	ClosePTag = Tag("</p>")
 
