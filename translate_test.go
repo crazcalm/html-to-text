@@ -140,7 +140,7 @@ func TestTranslate(t *testing.T) {
 		}
 
 		if len(links) != test.NumOfLinks {
-			t.Errorf("Expeced %d number of links, but got %d", test.NumOfLinks, len(links))
+			t.Errorf("Expected %d number of links, but got %d", test.NumOfLinks, len(links))
 		}
 	}
 }
